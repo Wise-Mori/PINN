@@ -1,0 +1,49 @@
+#practice 2 - day 2 
+# -*- coding: utf-8 -*-
+import torch
+
+torch.set_default_dtype(torch.float64)
+torch.manual_seed(0)
+
+x = torch.rand(10, 1, requires_grad=True)
+t = torch.rand(10, 1, requires_grad=True)
+
+print("u(x,t) = x^2 * exp(-t)")
+
+def u_func(x, t):
+    return x**2 * torch.exp(-t)
+
+u = u_func(x, t)
+
+u_x_autograd = torch.autograd.grad(
+    u, x,
+    grad_outputs=torch.ones_like(u),
+    create_graph=True
+)[0]
+
+print("x:")
+print(x)
+
+print("t:")
+print(t)
+
+print("Autograd u_x:")
+print(u_x_autograd)
+
+print("\n")
+print("--------------------------------")
+print("h        میانگین حطای روش تفاضل محدود")
+print("--------------------------------")
+
+for power in range(1, 8):
+    h = 10.0 ** (-power)
+
+    u_plus = u_func(x + h, t)
+    u_minus = u_func(x - h, t)
+
+    u_x_fd = (u_plus - u_minus) / (2 * h)
+
+    error = torch.abs(u_x_fd - u_x_autograd)
+    mean_error = error.mean()
+
+    print(f"1e-{power}    {mean_error.item():.3e}")
