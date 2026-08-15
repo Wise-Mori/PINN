@@ -1,0 +1,43 @@
+import torch
+
+torch.manual_seed(0)
+
+print("u(x,t) = x^2 * exp(-t)")
+print("Compare second derivative error with float32 and float64")
+
+h = 1e-3
+
+# ---------------- float32 ----------------
+
+x = torch.rand(10, 1, dtype=torch.float32)
+t = torch.rand(10, 1, dtype=torch.float32)
+
+u = x**2 * torch.exp(-t)
+u_plus = (x + h)**2 * torch.exp(-t)
+u_minus = (x - h)**2 * torch.exp(-t)
+
+u_xx_fd = (u_plus - 2*u + u_minus) / h**2
+u_xx_byhand = 2 * torch.exp(-t)
+
+error32 = torch.abs(u_xx_fd - u_xx_byhand).mean()
+
+print("\ncalculate by float32:")
+print(f"float32 error: {error32}")
+
+
+# ---------------- float64 ----------------
+
+x = torch.rand(10, 1, dtype=torch.float64)
+t = torch.rand(10, 1, dtype=torch.float64)
+
+u = x**2 * torch.exp(-t)
+u_plus = (x + h)**2 * torch.exp(-t)
+u_minus = (x - h)**2 * torch.exp(-t)
+
+u_xx_fd = (u_plus - 2*u + u_minus) / h**2
+u_xx_byhand = 2 * torch.exp(-t)
+
+error64 = torch.abs(u_xx_fd - u_xx_byhand).mean()
+
+print("\ncalculate by float64:")
+print(f"float64 error: {error64}")

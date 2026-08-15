@@ -1,0 +1,27 @@
+# practice 4 - day 2 
+
+# for float32
+# u(x,t) = x^2 * exp(-t)
+
+import torch 
+torch.manual_seed(0)
+print("u(x,t) = x^2 * exp(-t)")
+print("calculate by float32 : ")
+x = torch.rand(10 , 1 , dtype=torch.float32 , requires_grad = True)
+t = torch.rand(10 , 1 , dtype=torch.float32 , requires_grad = True)
+u = x**2 * torch.exp(-t)
+u_x = torch.autograd.grad(u, x , grad_outputs=torch.ones_like(u), create_graph=True)[0]
+u_xx = torch.autograd.grad(u_x, x , grad_outputs=torch.ones_like(u_x), create_graph=True)[0]
+u_xx_byhand = 2 * torch.exp(-t)
+error32 = torch.abs(u_xx - u_xx_byhand).mean()
+print(f"float32 error : {error32}")
+
+print("calculate by float64 : ")
+x = torch.rand(10 , 1 , dtype=torch.float64 , requires_grad = True)
+t = torch.rand(10 , 1 , dtype=torch.float64 , requires_grad = True)
+u = x**2 * torch.exp(-t)
+u_x = torch.autograd.grad(u, x , grad_outputs=torch.ones_like(u), create_graph=True)[0]
+u_xx = torch.autograd.grad(u_x, x , grad_outputs=torch.ones_like(u_x), create_graph=True)[0]
+u_xx_byhand = 2 * torch.exp(-t)
+error64 = torch.abs(u_xx - u_xx_byhand).mean()
+print(f"float64 error : {error64}")
