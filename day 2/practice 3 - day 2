@@ -1,0 +1,68 @@
+# practice 3 - day 2
+# MLP practice
+
+print("< thesis > ")
+# print("\n")
+print("input : 2")
+print ("hidden layer 1 : 10 neurons ")
+print ("hidden layer 2 : 10 neurons ")
+print ("output : 1 ")
+print("input: 2  -> hidden1: 10 -> hidden2: 10 -> output: 1")
+print (" 2 -> 10 -> 10 -> 1 ") 
+
+
+import torch
+import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(2, 10),
+    nn.Tanh(),
+    nn.Linear(10, 10),
+    nn.Tanh(),
+    nn.Linear(10, 1)
+)
+
+
+layer1_weights = 2 * 10
+layer1_biases = 10
+layer1_total = layer1_weights + layer1_biases
+
+layer2_weights = 10 * 10
+layer2_biases = 10
+layer2_total = layer2_weights + layer2_biases
+
+layer3_weights = 10 * 1
+layer3_biases = 1
+layer3_total = layer3_weights + layer3_biases
+
+manual_total = layer1_total + layer2_total + layer3_total
+
+print("\nManual count:")
+print(f"Layer 1 parameters: {layer1_total}")
+print(f"Layer 2 parameters: {layer2_total}")
+print(f"Layer 3 parameters: {layer3_total}")
+print(f"Total parameters by hand: {manual_total}")
+print("-----------------------------------------")
+
+pytorch_total = sum(p.numel() for p in model.parameters())
+
+print("\nPyTorch count:")
+print(f"Total parameters with PyTorch: {pytorch_total}")
+print("-----------------------------------------")
+
+
+print("\nParameter details:")
+for name, param in model.named_parameters():
+    print(f"{name}: shape = {param.shape}, number = {param.numel()}")
+
+print("-----------------------------------------")
+
+
+print("\nComparison:")
+print(f"Manual count  = {manual_total}")
+print(f"PyTorch count = {pytorch_total}")
+
+if manual_total == pytorch_total:
+    print("Result: counts match")
+else:
+    print("Result: counts do not match")
