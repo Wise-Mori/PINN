@@ -1,0 +1,24 @@
+import torch
+torch.manual_seed(0)
+torch.set_default_dtype(torch.float64)
+print("gradian")
+print("u(x,t) = x^2 * exp(-t)")
+x = torch.rand(50, 1, requires_grad=True)
+t = torch.rand(50, 1, requires_grad=True)
+h = 1e-5
+tolerance = 1e-6
+u = x**2 * torch.exp(-t)
+u_x_autograd = torch.autograd.grad(u, x,grad_outputs=torch.ones_like(u),create_graph=True)[0]
+u_plus = (x + h)**2 * torch.exp(-t)
+u_minus = (x - h)**2 * torch.exp(-t)
+u_x_fd = (u_plus - u_minus) / (2 * h)
+error = torch.abs(u_x_autograd - u_x_fd)
+max_error = error.max()
+mean_error = error.mean()
+print(f"Mean error: {mean_error.item():.3e}")
+print(f"Max error: {max_error.item():.3e}")
+print(f"Tolerance: {tolerance:.1e}")
+if max_error > tolerance:
+    print("failed")
+else:
+    print("passed")
